@@ -11,7 +11,7 @@ export async function saveMarkdownFile(
   args: {
     title: string
     markdownContent: string
-    mediaFiles: {url: string; filename: string}[]
+    mediaFiles: {url: string; filename: string; placeholder: string}[]
   },
 ) {
   const {title, markdownContent, mediaFiles} = args
@@ -51,9 +51,11 @@ export async function saveMarkdownFile(
     const uploadMediaFile = ({
       url,
       filename,
+      placeholder,
     }: {
       url: string
       filename: string
+      placeholder: string
     }) => {
       return new Promise<void>((resolve, reject) => {
         const regex = /ipfs:\/\/(.+)/
@@ -87,7 +89,7 @@ export async function saveMarkdownFile(
                 debug(`Media file successfully saved: ${mediaFilePath}`)
                 // Update the markdown content with the correct file name
                 updatedMarkdownContent = updatedMarkdownContent.replace(
-                  filename,
+                  placeholder,
                   filenameWithExt,
                 )
                 resolve()

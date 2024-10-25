@@ -50,7 +50,7 @@ contextBridge.exposeInMainWorld('docExport', {
   exportDocument: async (
     title: string,
     markdownContent: string,
-    mediaFiles: {url: string; filename: string}[],
+    mediaFiles: {url: string; filename: string; placeholder: string}[],
   ) => {
     return new Promise((resolve, reject) => {
       ipcRenderer.once('export-completed', (event, response) => {
@@ -70,7 +70,7 @@ contextBridge.exposeInMainWorld('docExport', {
       title: string
       markdown: {
         markdownContent: string
-        mediaFiles: {url: string; filename: string}[]
+        mediaFiles: {url: string; filename: string; placeholder: string}[]
       }
     }[],
   ) => {

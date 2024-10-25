@@ -114,7 +114,8 @@ function convertBlocksToHtml(
 }
 
 async function extractMediaFiles(blocks: HMBlock[]) {
-  const mediaFiles: {url: string; filename: string}[] = []
+  const mediaFiles: {url: string; filename: string; placeholder: string}[] = []
+  let counter = 1
   const extractMedia = async (block) => {
     if (
       block.type === 'image' ||
@@ -131,8 +132,10 @@ async function extractMediaFiles(blocks: HMBlock[]) {
           return
         }
         const filename = url.split('/').pop()
-        mediaFiles.push({url, filename})
-        block.props = {...block.props, url: `media/${filename}`} // Update the URL to point to the local media folder
+        const placeholder = `file-${counter}`
+        mediaFiles.push({url, filename, placeholder})
+        counter++
+        block.props = {...block.props, url: `media/${placeholder}`} // Update the URL to point to the local media folder
       }
     }
     if (block.children) {

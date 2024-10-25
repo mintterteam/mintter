@@ -147,7 +147,7 @@ ipcMain.on(
       title: string
       markdown: {
         markdownContent: string
-        mediaFiles: {url: string; filename: string}[]
+        mediaFiles: {url: string; filename: string; placeholder: string}[]
       }
     }[],
   ) => {
@@ -214,9 +214,11 @@ ipcMain.on(
         const uploadMediaFile = async ({
           url,
           filename,
+          placeholder,
         }: {
           url: string
           filename: string
+          placeholder: string
         }) => {
           return new Promise<void>((resolve, reject) => {
             const regex = /ipfs:\/\/(.+)/
@@ -252,7 +254,7 @@ ipcMain.on(
                       debug(`Media file successfully saved: ${mediaFilePath}`)
                       // Update the markdown content with the correct file name
                       updatedMarkdownContent = updatedMarkdownContent.replace(
-                        filename,
+                        placeholder,
                         filenameWithExt,
                       )
                       resolve()
