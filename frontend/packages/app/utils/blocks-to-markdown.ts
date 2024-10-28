@@ -87,6 +87,8 @@ function convertBlockToHtml(
         return `<p>![${block.props.name}](${block.props.url} "width=${block.props.width}")</p>`
       case 'file':
         return `<p>[${block.props.name}](${block.props.url} "size=${block.props.size}")</p>`
+      case 'web-embed':
+        return `<p>[[tweet(${block.props.url})]]</p>`
       case 'math' || 'equation':
         return `<p>$$${contentHtml}$$</p>`
       default:
