@@ -1,4 +1,4 @@
-import {HMBlock} from '@mintter/shared'
+import {HMBlock, HMDocument} from '@mintter/shared'
 import rehypeParse from 'rehype-parse'
 import rehypeRemark from 'rehype-remark'
 import remarkGfm from 'remark-gfm'
@@ -6,10 +6,11 @@ import remarkStringify from 'remark-stringify'
 import {unified} from 'unified'
 
 function applyStyles(text, styles) {
-  if (styles.bold) text = `<strong>${text}</strong>`
-  if (styles.italic) text = `<em>${text}</em>`
+  if (styles.bold) text = `<b>${text}</b>`
+  if (styles.italic) text = `<i>${text}</i>`
   if (styles.strike) text = `<del>${text}</del>`
   if (styles.underline) text = `<u>${text}</u>`
+  if (styles.code) text = `<code>${text}</code>`
   return text
 }
 
@@ -137,7 +138,8 @@ async function extractMediaFiles(blocks: HMBlock[]) {
         const placeholder = `file-${counter}`
         mediaFiles.push({url, filename, placeholder})
         counter++
-        block.props = {...block.props, url: `media/${placeholder}`} // Update the URL to point to the local media folder
+        // Update the URL to point to the local media folder
+        block.props = {...block.props, url: `media/${placeholder}`}
       }
     }
     if (block.children) {
@@ -152,16 +154,17 @@ async function extractMediaFiles(blocks: HMBlock[]) {
   return mediaFiles
 }
 
-// async function extractLinks(blocks: HMBlock[], blockMap: Map<string, {name: string; path: string}>) {
-//   const setUrls = async (block) => {
-//     if ()
-//   }
-// }
-
 export async function convertBlocksToMarkdown(
   blocks: HMBlock[],
+  document: HMDocument,
   docMap?: Map<string, {name: string; path: string}>,
 ) {
+  const frontMatter = `---
+title: ${document.title || ''}
+created_at: ${document.createTime}
+---
+
+`
   const mediaFiles = await extractMediaFiles(blocks)
   const markdownFile = await unified()
     .use(rehypeParse, {fragment: true})
@@ -170,7 +173,10 @@ export async function convertBlocksToMarkdown(
     .use(remarkGfm)
     .use(remarkStringify)
     .process(convertBlocksToHtml(blocks, docMap))
-  const markdownContent = markdownFile.value as string
+  const markdownContent = (frontMatter +
+    (document.title
+      ? `# ${document.title}\n\n${markdownFile.value}`
+      : markdownFile.value)) as string
   return {markdownContent, mediaFiles}
 }
 

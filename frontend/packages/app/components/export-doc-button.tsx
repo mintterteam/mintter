@@ -1,4 +1,4 @@
-import {HMBlockNode, toHMBlock} from '@mintter/shared'
+import {HMBlockNode, getDocumentTitle, toHMBlock} from '@mintter/shared'
 import {Button, Tooltip, toast} from '@mintter/ui'
 import {Download} from '@tamagui/lucide-icons'
 import {SizableText, YStack} from 'tamagui'
@@ -14,7 +14,7 @@ export const ExportDocButton = ({
   version: string | undefined
 }) => {
   const pub = usePublication({id: docId, version: version})
-  const title = pub.data?.document?.title || 'document'
+  const title = getDocumentTitle(pub.data?.document)
   const {exportDocument, openDirectory} = useAppContext()
   return (
     <>
@@ -27,13 +27,13 @@ export const ExportDocButton = ({
               pub.data?.document?.children
             const editorBlocks = toHMBlock(blocks)
 
-            const markdownWithFiles =
-              await convertBlocksToMarkdown(editorBlocks)
+            const markdownWithFiles = await convertBlocksToMarkdown(
+              editorBlocks,
+              pub.data!.document!,
+            )
 
             const {markdownContent, mediaFiles} = markdownWithFiles
-            // Prepend the title as an H1 to the markdown content
-            const markdownWithTitle = `# ${title}\n\n${markdownContent}`
-            exportDocument(title, markdownWithTitle, mediaFiles)
+            exportDocument(title, markdownContent, mediaFiles)
               .then((res) => {
                 const success = (
                   <>
