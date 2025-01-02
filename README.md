@@ -1,3 +1,7 @@
+⚠️ This is an old repo, preserved for historical purposes.
+
+Go to https://github.com/seed-hypermedia/seed for the latest version.
+
 # Mintter
 
 Mintter is a decentralized knowledge collaboration application for open
